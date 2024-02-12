@@ -1,0 +1,155 @@
+<div class="parent flex flex-col gap-12">
+  <!--Search bar at the top-->
+  <div class="search h-8 flex gap-4 mt-8 m-auto justify-center items-center">
+    <input
+      type="text"
+      placeholder="GitHub Username"
+      class="border border-gray-10"
+      [(ngModel)]="githubUsername"
+    />
+    <button
+      class="border border-gray-10 pl-2 pr-2"
+      (click)="searchGithubUser()"
+    >
+      Search
+    </button>
+  </div>
+  <div class="empty-state flex justify-center" *ngIf="!isValidUser">
+    <span
+      >Please start by searching for a GitHub username using the above input
+      field</span
+    >
+  </div>
+
+  <ng-template
+    class="loading"
+    *ngIf="loading"
+    [ngTemplateOutlet]="loadingScreen"
+  ></ng-template>
+
+  <div class="flex justify-center content-center">
+    <div
+      class="valid-user flex flex-col gap-10 p-10 w-screen"
+      *ngIf="isValidUser && !loading"
+    >
+      <!--isValidUser &&-->
+      <!-- User Info section -->
+      <div class="user-info flex gap-7 justify-start ml-8">
+        <img
+          src="{{ githubUser.avatar_url }}"
+          class="border border-3-black rounded-full h-24 w-24"
+        />
+        <div class="flex flex-col">
+          <span class="text-3xl font-bold">{{ githubUser.name }}</span>
+          <span>{{ githubUser.bio }}</span>
+          <div class="flex gap-4">
+            <img
+              src="assets/location-pin.png"
+              class="h-5 w-5"
+              alt="Profile Icon"
+            />
+            <span>{{ githubUser.location }}</span>
+          </div>
+          <a
+            href="https://twitter.com/iohndee?lang=en"
+            class="underline font-semibold"
+            *ngIf="githubUser.twitter_username"
+            >https://twitter.com/{{ githubUser.twitter_username }}?lang=en</a
+          >
+        </div>
+      </div>
+
+      <!-- repositories section -->
+      <div class="flex w-full content-center justify-center">
+        <div class="paginated-repos w-full flex flex-wrap  gap-1 justify-between">
+          <app-repository-card
+            *ngFor="
+              let repo of repositories
+                | paginate
+                  : {
+                      id: 'repo-pagination',
+                      itemsPerPage: 6,
+                      currentPage: pageNumber,
+                      totalItems: githubUser.public_repos
+                    }
+            "
+            [repoDetails]="repo"
+            class="width-repo-card h-40"
+          ></app-repository-card>
+        </div>
+      </div>
+      <div class="flex justify-center content-center">
+        <pagination-controls
+        id="repo-pagination"
+        (pageChange)="changePage($event)"
+      ></pagination-controls>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #loadingScreen>
+  <div class="fb-item">
+    <div class="first-section-wrapper">
+      <div class="gravatar">
+        <ngx-skeleton-loader
+          appearance="circle"
+          [theme]="{ width: '80px', height: '80px' }"
+        >
+        </ngx-skeleton-loader>
+      </div>
+      <div class="gravatar-title">
+        <div>
+          <ngx-skeleton-loader
+            [theme]="{
+              width: '200px',
+              'border-radius': '0',
+              height: '15px',
+              'margin-bottom': '10px'
+            }"
+          ></ngx-skeleton-loader>
+        </div>
+        <div>
+          <ngx-skeleton-loader
+            [theme]="{ width: '170px', 'border-radius': '0', height: '15px' }"
+          >
+          </ngx-skeleton-loader>
+        </div>
+      </div>
+    </div>
+    <div class="second-section-wrapper">
+      <div class="wrapper">
+        <ngx-skeleton-loader
+          [theme]="{
+            width: '80%',
+            'border-radius': '0',
+            height: '15px',
+            'margin-bottom': '10px'
+          }"
+        ></ngx-skeleton-loader>
+      </div>
+      <div class="wrapper">
+        <ngx-skeleton-loader
+          [theme]="{
+            width: '90%',
+            'border-radius': '0',
+            height: '15px',
+            'margin-bottom': '10px'
+          }"
+        ></ngx-skeleton-loader>
+      </div>
+      <div class="wrapper">
+        <ngx-skeleton-loader
+          [theme]="{
+            width: '60%',
+            'border-radius': '0',
+            height: '15px',
+            'margin-bottom': '10px'
+          }"
+        ></ngx-skeleton-loader>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<div></div>
